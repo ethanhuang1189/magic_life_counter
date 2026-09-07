@@ -11,15 +11,18 @@ int main(void) {
   //initialize encoder_clk and encoder_dt (lets pico board read them)
   gpio_init(ENCODER_CLK);
   gpio_set_dir(ENCODER_CLK, GPIO_IN);
+  gpio_pull_up(ENCODER_CLK);
 
   gpio_init(ENCODER_DT);
   gpio_set_dir(ENCODER_DT, GPIO_IN);
+  gpio_pull_up(ENCODER_DT);
 
   gpio_init(ENCODER_SW);
   gpio_set_dir(ENCODER_SW, GPIO_IN);
   gpio_pull_up(ENCODER_SW);
 
   //encoderPOS: the position of the encoder (goes up clockwise, down counter clockwise)
+  sleep_ms(10);
   int encoderPOS = 0;
   int lastCLK = gpio_get(ENCODER_CLK);
 
@@ -33,24 +36,26 @@ int main(void) {
     
     encoderButtonIsOn = !gpio_get(ENCODER_SW);
     int currentCLK = gpio_get(ENCODER_CLK);
+    
 
     if (!encoderButtonIsPressed && encoderButtonIsOn) {
-      printf("button pressed!\n");
-      sleep_ms(20);
-      encoderButtonIsPressed = true;
+        printf("button pressed!\n");
+        sleep_ms(20);
+        encoderButtonIsPressed = true;
+        encoderPOS = 0;
     } else if (encoderButtonIsPressed && !encoderButtonIsOn) {
-      sleep_ms(20);
-      encoderButtonIsPressed = false;
+        sleep_ms(20);
+        encoderButtonIsPressed = false;
     }
 
     
 
     if (currentCLK < lastCLK) {
       if (currentCLK != gpio_get(ENCODER_DT)) {
-        encoderPOS++;
+        encoderPOS--;
         //printf("test add 1: %d\n", encoderPOS);
       } else {
-        encoderPOS--;
+        encoderPOS++;
       }
 
       printf("health: %d\n", encoderPOS);

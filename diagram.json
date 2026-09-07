@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "author": "Ethan H",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-pi-pico",
+      "id": "pico",
+      "top": 73.65,
+      "left": 13.2,
+      "attrs": { "builder": "pico-sdk" }
+    },
+    { "type": "board-epaper-2in9", "id": "epd1", "top": 58.2, "left": 119.28, "attrs": {} },
+    { "type": "wokwi-ky-040", "id": "encoder1", "top": 107.3, "left": -154.4, "attrs": {} }
+  ],
+  "connections": [
+    [ "pico:GP0", "$serialMonitor:RX", "", [] ],
+    [ "pico:GP1", "$serialMonitor:TX", "", [] ],
+    [ "encoder1:CLK", "pico:GP2", "green", [ "h0" ] ],
+    [ "pico:GP3", "encoder1:DT", "green", [ "h0" ] ],
+    [ "encoder1:VCC", "pico:3V3", "red", [ "h9.6", "v0.4", "h105.6", "v-259.2" ] ],
+    [ "encoder1:GND", "pico:GND.1", "black", [ "h38.4", "v-47.2" ] ],
+    [ "encoder1:SW", "pico:GP4", "green", [ "h0" ] ]
+  ],
+  "dependencies": {}
+}
