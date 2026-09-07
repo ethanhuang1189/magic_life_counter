@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include <stdbool.h>
 #define ENCODER_CLK 2
 #define ENCODER_DT 3
 #define ENCODER_SW 4
@@ -21,17 +22,28 @@ int main(void) {
   //encoderPOS: the position of the encoder (goes up clockwise, down counter clockwise)
   int encoderPOS = 0;
   int lastCLK = gpio_get(ENCODER_CLK);
+
+  bool encoderButtonIsPressed = false;
+  bool encoderButtonIsOn = false;
   //first sets lastCLK which will always be 0.  In while loop, first grab CLK value and save it to current CLK
   //check if current is less than last clk, we're only checking when clk changes for the second time as everytime
   //the encoder rotates there are 4 possible positions and 2 of them clk changes
   //then if clk != dt add 1 (this only happens on clockwise turn)
   while (true) {
     
+    encoderButtonIsOn = !gpio_get(ENCODER_SW);
     int currentCLK = gpio_get(ENCODER_CLK);
+
+    if (!encoderButtonIsPressed && encoderButtonIsOn) {
+      printf("button pressed!\n");
+      sleep_ms(20);
+      encoderButtonIsPressed = true;
+    } else if (encoderButtonIsPressed && !encoderButtonIsOn) {
+      sleep_ms(20);
+      encoderButtonIsPressed = false;
+    }
+
     
-    //if (gpio_get(ENCODER_SW)) {
-    //  printf("button pressed: %d", gpio_get(ENCODER_SW));
-    //}
 
     if (currentCLK < lastCLK) {
       if (currentCLK != gpio_get(ENCODER_DT)) {
