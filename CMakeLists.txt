@@ -32,10 +32,12 @@ project(Magic_Life_Counter C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
+add_subdirectory(lib/pico_sharpmem_display/src)
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Magic_Life_Counter Magic_Life_Counter.c )
+#add_executable(Magic_Life_Counter Magic_Life_Counter.c)
+add_executable(Magic_Life_Counter screen_test.c)
 
 pico_set_program_name(Magic_Life_Counter "Magic_Life_Counter")
 pico_set_program_version(Magic_Life_Counter "0.1")
@@ -46,7 +48,8 @@ pico_enable_stdio_usb(Magic_Life_Counter 1)
 
 # Add the standard library to the build
 target_link_libraries(Magic_Life_Counter
-        pico_stdlib)
+        pico_stdlib
+        SHARPDISP)
 
 # Add the standard include files to the build
 target_include_directories(Magic_Life_Counter PRIVATE

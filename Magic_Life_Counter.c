@@ -4,11 +4,17 @@
 #define ENCODER_CLK 2
 #define ENCODER_DT 3
 #define ENCODER_SW 4
+#define BUTTON 13
 
 int main(void) {
   stdio_init_all();
 
+
   //initialize encoder_clk and encoder_dt (lets pico board read them)
+  gpio_init(BUTTON);
+  gpio_set_dir(BUTTON, GPIO_IN);
+  gpio_pull_up(BUTTON);
+
   gpio_init(ENCODER_CLK);
   gpio_set_dir(ENCODER_CLK, GPIO_IN);
   gpio_pull_up(ENCODER_CLK);
@@ -28,18 +34,30 @@ int main(void) {
 
   bool encoderButtonIsPressed = false;
   bool encoderButtonIsOn = false;
+
+  bool buttonIsPressed = false;
+  bool buttonIsOn = false;
+
   //first sets lastCLK which will always be 0.  In while loop, first grab CLK value and save it to current CLK
   //check if current is less than last clk, we're only checking when clk changes for the second time as everytime
   //the encoder rotates there are 4 possible positions and 2 of them clk changes
   //then if clk != dt add 1 (this only happens on clockwise turn)
   while (true) {
-    
+    buttonIsOn = !gpio_get(BUTTON);
     encoderButtonIsOn = !gpio_get(ENCODER_SW);
     int currentCLK = gpio_get(ENCODER_CLK);
     
+    if (!buttonIsPressed && buttonIsOn) {
+        printf("button pressed!\n");
+        sleep_ms(20);
+        buttonIsPressed = true;
+    } else if (buttonIsPressed && !buttonIsOn) {
+        sleep_ms(20);
+        buttonIsPressed = false;
+    }
 
     if (!encoderButtonIsPressed && encoderButtonIsOn) {
-        printf("button pressed!\n");
+        printf("ENCODER button pressed!\n");
         sleep_ms(20);
         encoderButtonIsPressed = true;
         encoderPOS = 0;
